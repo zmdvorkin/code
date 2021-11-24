@@ -1,10 +1,64 @@
 import random
+from typing import List
 from icecream import ic 
 dealer_cards = []
 player_cards = []
+
+class Noun: 
+    def verb1(self, param1):
+        self.adjectives = "Funny"
+        self.adverb =  "Fast"
+        pass
+
+class Card:
+    def __init__(self, suite, value):
+        self.suite = suite
+        self.value = value
+        self._points = 0
+        if value.isnumeric():
+            value_as_int = int(value)
+            is_valid_value = value_as_int >= 2 and value_as_int <= 10
+            if is_valid_value:
+                self._points = value_as_int
+            else:
+                raise Exception("Error")
+        else:
+            # 
+            is_face_card = value  == "K" or value == "Q" or value == "J" or value == "A"
+            if is_face_card:
+                self._points = 10 
+            else:
+                raise Exception ("Not valid value")
+
+
+    def __str__(self):
+        return f"[{self.value}:{self.suite}]"
+    
+    def __repr__(self):
+        return self.__str__()
+
+    def points(self):
+        return self._points
+
+def GetRandomCard():
+    values = ['A','Q','K','J']
+    for i in list(range(2,11)):
+        values += [f'{i}']
+  
+    value = random.choice(values)
+    suites = ['Heart','Diamond','Club','Spade']
+    suite = random.choice(suites)
+    return Card(suite,value)
+
+def points(cards:List[Card]):
+    sum = 0
+    for card in cards:
+        sum += card.points()
+    return sum
+
 def is_gameover(dealer_cards, player_cards):
-    dealer_sum = sum(dealer_cards) # dealer_cards[0] + dealer_cards[1]
-    player_sum = sum(player_cards) # player_cards[1] + player_cards[0]
+    dealer_sum = points(dealer_cards) # dealer_cards[0] + dealer_cards[1]
+    player_sum = points(player_cards) # player_cards[1] + player_cards[0]
     ic(player_cards)
     ic(dealer_cards)
     ic(dealer_sum, player_sum)
@@ -31,10 +85,10 @@ def hand_to_string(cards):
 
 def play_game():
     while len(dealer_cards) != 2:
-        dealer_cards.append(random.randint(1,11))
+        dealer_cards.append(GetRandomCard())
     print(dealer_cards)
     while len(player_cards) != 2:
-        player_cards.append(random.randint(1,11))
+        player_cards.append(GetRandomCard())
 
     while (True):
         is_game_over_t = is_gameover(dealer_cards, player_cards)
@@ -43,12 +97,12 @@ def play_game():
 
         print(f"Your cards are {hand_to_string(player_cards)}." )
 
-        dealer_sum = sum(dealer_cards) # dealer_cards[0] + dealer_cards[1]
-        player_sum = sum(player_cards) # player_cards[1] + player_cards[0]
+        dealer_sum = points(dealer_cards) # dealer_cards[0] + dealer_cards[1]
+        player_sum = points(player_cards) # player_cards[1] + player_cards[0]
         
         UserAction1 = input (f"Your cards add up to {player_sum}, press H to hit, anything else to hold")
         if UserAction1.lower() == "h":
-            player_cards.append(random.randint(1,11))
+            player_cards.append(GetRandomCard())
         xx = is_gameover(dealer_cards,player_cards)
         if xx == True:
             return
@@ -56,11 +110,11 @@ def play_game():
 
         # Do dealer actions
         if dealer_sum < 15:
-            dealer_cards.append(random.randint(1,11))
+            dealer_cards.append(GetRandomCard())
         
         else:
-            dealer_sum = sum(dealer_cards) # dealer_cards[0] + dealer_cards[1]
-            player_sum = sum(player_cards) # player_cards[1] + player_cards[0]
+            dealer_sum = points(dealer_cards) # dealer_cards[0] + dealer_cards[1]
+            player_sum = points(player_cards) # player_cards[1] + player_cards[0]
             ic(player_cards)
             ic(dealer_cards)
             ic(dealer_sum, player_sum)
@@ -70,4 +124,18 @@ def play_game():
             else:
                 print("Dealer wins :(")
                 return
+
+
+
+
+c1 = GetRandomCard()
+c2 = GetRandomCard()
+
+
+
+# def trash():
+#    print(GetRandomCard())
+# for _ in range(10):
+#    trash()
+
 play_game()
